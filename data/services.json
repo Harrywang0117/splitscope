@@ -1,0 +1,473 @@
+{
+  "names": {
+    "google": "Google",
+    "youtube": "YouTube",
+    "google-play": "Google Play",
+    "gmail": "Gmail",
+    "googlefcm": "Google 推送 (FCM)",
+    "google-gemini": "Gemini",
+    "openai": "OpenAI / ChatGPT",
+    "anthropic": "Anthropic / Claude",
+    "perplexity": "Perplexity",
+    "xai": "xAI / Grok",
+    "groq": "Groq",
+    "meta": "Meta",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "whatsapp": "WhatsApp",
+    "messenger": "Messenger",
+    "twitter": "X / Twitter",
+    "x": "X / Twitter",
+    "telegram": "Telegram",
+    "discord": "Discord",
+    "reddit": "Reddit",
+    "github": "GitHub",
+    "gitlab": "GitLab",
+    "microsoft": "Microsoft",
+    "onedrive": "OneDrive",
+    "bing": "Bing / Copilot",
+    "github-copilot": "GitHub Copilot",
+    "apple": "Apple",
+    "icloud": "iCloud",
+    "apple-cn": "Apple 中国",
+    "apple-dev": "Apple 开发者",
+    "apple-tvplus": "Apple TV+",
+    "amazon": "Amazon",
+    "aws": "AWS",
+    "netflix": "Netflix",
+    "disney": "Disney+",
+    "hbo": "HBO Max",
+    "hulu": "Hulu",
+    "primevideo": "Prime Video",
+    "spotify": "Spotify",
+    "tiktok": "TikTok",
+    "twitch": "Twitch",
+    "steam": "Steam",
+    "epicgames": "Epic Games",
+    "ea": "EA",
+    "blizzard": "暴雪",
+    "ubisoft": "育碧",
+    "playstation": "PlayStation",
+    "sony": "Sony",
+    "nintendo": "任天堂",
+    "xbox": "Xbox",
+    "nvidia": "NVIDIA",
+    "paypal": "PayPal",
+    "stripe": "Stripe",
+    "binance": "币安",
+    "okx": "OKX",
+    "bybit": "Bybit",
+    "cloudflare": "Cloudflare",
+    "akamai": "Akamai",
+    "fastly": "Fastly",
+    "jsdelivr": "jsDelivr",
+    "wikimedia": "维基百科",
+    "wikipedia": "维基百科",
+    "crunchyroll": "Crunchyroll",
+    "notion": "Notion",
+    "slack": "Slack",
+    "zoom": "Zoom",
+    "dropbox": "Dropbox",
+    "adobe": "Adobe",
+    "speedtest": "Speedtest",
+    "samsung": "三星",
+    "baidu": "百度",
+    "alibaba": "阿里巴巴",
+    "alibabacloud": "阿里云",
+    "aliyun": "阿里云",
+    "taobao": "淘宝",
+    "tmall": "天猫",
+    "alipay": "支付宝",
+    "dingtalk": "钉钉",
+    "tencent": "腾讯",
+    "qq": "QQ",
+    "wechat": "微信",
+    "tencent-games": "腾讯游戏",
+    "bytedance": "字节跳动",
+    "douyin": "抖音",
+    "toutiao": "今日头条",
+    "bilibili": "哔哩哔哩",
+    "bilibili-cdn": "哔哩哔哩 CDN",
+    "xiaohongshu": "小红书",
+    "weibo": "微博",
+    "sina": "新浪",
+    "zhihu": "知乎",
+    "douban": "豆瓣",
+    "jd": "京东",
+    "pinduoduo": "拼多多",
+    "meituan": "美团",
+    "didi": "滴滴",
+    "netease": "网易",
+    "neteasemusic": "网易云音乐",
+    "iqiyi": "爱奇艺",
+    "youku": "优酷",
+    "mgtv": "芒果TV",
+    "kuaishou": "快手",
+    "xiaomi": "小米",
+    "huawei": "华为",
+    "oppo": "OPPO",
+    "vivo": "vivo",
+    "haier": "海尔",
+    "ctrip": "携程",
+    "12306": "12306",
+    "unionpay": "银联",
+    "cmb": "招商银行",
+    "icbc": "工商银行",
+    "ccb": "建设银行",
+    "boc": "中国银行",
+    "abchina": "农业银行",
+    "chinamobile": "中国移动",
+    "chinatelecom": "中国电信",
+    "chinaunicom": "中国联通",
+    "category-ads-all": "广告/追踪",
+    "category-httpdns-cn": "国内 HTTPDNS",
+    "category-cdn-!cn": "境外 CDN",
+    "category-ai-!cn": "AI 服务",
+    "apple-update": "Apple 更新",
+    "apple-intelligence": "Apple Intelligence",
+    "apple-ads": "Apple 广告",
+    "apple-pki": "Apple 证书",
+    "category-ntp": "NTP 授时",
+    "category-games": "游戏",
+    "category-dev": "开发者服务",
+    "category-social-media": "社交媒体",
+    "category-ai-chat": "AI 对话",
+    "category-cdn": "CDN",
+    "category-entertainment": "影音娱乐",
+    "category-ecommerce": "电商",
+    "category-scholar": "学术",
+    "category-education": "教育",
+    "category-media": "媒体",
+    "category-porn": "成人内容",
+    "category-pt": "PT 站",
+    "category-speedtest": "测速",
+    "category-public-tracker": "BT Tracker",
+    "category-remote-control": "远程控制",
+    "category-communication": "通讯",
+    "category-collaborate": "协作办公",
+    "category-bank": "银行",
+    "category-securities": "证券",
+    "category-wiki": "百科",
+    "category-browser": "浏览器",
+    "category-container": "容器镜像",
+    "category-vpnservices": "VPN 服务",
+    "category-android-app-download": "安卓应用下载",
+    "category-companies": "企业",
+    "category-ads": "广告",
+    "category-httpdns": "HTTPDNS",
+    "microsoft-dev": "Microsoft 开发者",
+    "msn": "MSN",
+    "office365": "Office 365",
+    "azure": "Azure",
+    "google-scholar": "Google 学术",
+    "doubleclick": "DoubleClick 广告",
+    "umeng": "友盟统计",
+    "getui": "个推",
+    "jpush": "极光推送",
+    "tencent-dev": "腾讯开发者",
+    "qcloud": "腾讯云",
+    "bytedance-ads": "字节广告",
+    "google-deepmind": "Google DeepMind",
+    "google-cn": "Google（国内可用）",
+    "itunes": "iTunes / App Store",
+    "npmjs": "npm",
+    "python": "Python / PyPI",
+    "amap": "高德地图",
+    "connectivity-check": "联网检测",
+    "docker": "Docker",
+    "cursor": "Cursor",
+    "alicdn": "阿里 CDN",
+    "microsoft-pki": "Microsoft 证书",
+    "jetbrains": "JetBrains",
+    "vercel": "Vercel",
+    "figma": "Figma",
+    "canva": "Canva",
+    "linkedin": "LinkedIn",
+    "pinterest": "Pinterest",
+    "quora": "Quora",
+    "tumblr": "Tumblr",
+    "line": "LINE",
+    "kakao": "Kakao",
+    "naver": "Naver",
+    "yahoo": "Yahoo",
+    "duckduckgo": "DuckDuckGo",
+    "protonmail": "Proton",
+    "signal": "Signal",
+    "viber": "Viber",
+    "weixin": "微信",
+    "163": "网易",
+    "126": "网易邮箱",
+    "mi": "小米",
+    "honor": "荣耀",
+    "oneplus": "一加",
+    "lenovo": "联想",
+    "dji": "大疆",
+    "tesla": "Tesla",
+    "nio": "蔚来",
+    "pdd": "拼多多",
+    "dianping": "大众点评",
+    "eleme": "饿了么",
+    "kugou": "酷狗",
+    "kuwo": "酷我",
+    "qqmusic": "QQ 音乐",
+    "ximalaya": "喜马拉雅",
+    "douyu": "斗鱼",
+    "huya": "虎牙",
+    "acfun": "AcFun",
+    "tieba": "百度贴吧",
+    "baidu-ads": "百度广告",
+    "hupu": "虎扑",
+    "csdn": "CSDN",
+    "cnblogs": "博客园",
+    "juejin": "稀土掘金",
+    "gitee": "Gitee",
+    "coding": "CODING",
+    "riot": "Riot Games",
+    "autodesk": "Autodesk"
+  },
+  "aliases": {
+    "支付宝": [
+      "bm7:AliPay",
+      "geosite:alibaba"
+    ],
+    "淘宝": [
+      "bm7:Taobao",
+      "geosite:alibaba"
+    ],
+    "闲鱼": [
+      "geosite:alibaba"
+    ],
+    "高德": [
+      "bm7:AutoNavi",
+      "geosite:alibaba"
+    ],
+    "饿了么": [
+      "bm7:Eleme"
+    ],
+    "钉钉": [
+      "bm7:DingTalk"
+    ],
+    "微信": [
+      "bm7:WeChat",
+      "geosite:tencent"
+    ],
+    "qq": [
+      "bm7:QQ",
+      "geosite:tencent"
+    ],
+    "腾讯会议": [
+      "bm7:TencentMeeting"
+    ],
+    "抖音": [
+      "bm7:DouYin",
+      "geosite:bytedance"
+    ],
+    "今日头条": [
+      "bm7:ByteDance",
+      "geosite:bytedance"
+    ],
+    "小红书": [
+      "bm7:XiaoHongShu",
+      "geosite:xiaohongshu"
+    ],
+    "b站": [
+      "bm7:BiliBili",
+      "geosite:bilibili"
+    ],
+    "哔哩哔哩": [
+      "bm7:BiliBili",
+      "geosite:bilibili"
+    ],
+    "京东": [
+      "bm7:JingDong",
+      "geosite:jd"
+    ],
+    "美团": [
+      "bm7:Meituan",
+      "geosite:meituan"
+    ],
+    "大众点评": [
+      "bm7:DianPing"
+    ],
+    "12306": [
+      "bm7:12306"
+    ],
+    "油管": [
+      "bm7:YouTube",
+      "geosite:youtube"
+    ],
+    "谷歌": [
+      "bm7:Google",
+      "geosite:google"
+    ],
+    "推特": [
+      "bm7:Twitter",
+      "geosite:twitter"
+    ],
+    "电报": [
+      "bm7:Telegram",
+      "geosite:telegram"
+    ],
+    "脸书": [
+      "bm7:Facebook",
+      "geosite:facebook"
+    ],
+    "奈飞": [
+      "bm7:Netflix",
+      "geosite:netflix"
+    ],
+    "网飞": [
+      "bm7:Netflix",
+      "geosite:netflix"
+    ],
+    "chatgpt": [
+      "bm7:OpenAI",
+      "geosite:openai"
+    ],
+    "claude": [
+      "bm7:Claude",
+      "geosite:anthropic"
+    ],
+    "gemini": [
+      "bm7:Gemini",
+      "geosite:google-gemini"
+    ],
+    "苹果": [
+      "bm7:Apple",
+      "geosite:apple"
+    ],
+    "app store": [
+      "bm7:AppStore"
+    ],
+    "微软": [
+      "bm7:Microsoft",
+      "geosite:microsoft"
+    ],
+    "任天堂": [
+      "bm7:Nintendo",
+      "geosite:nintendo"
+    ],
+    "switch": [
+      "bm7:Nintendo",
+      "geosite:nintendo"
+    ],
+    "ps5": [
+      "bm7:PlayStation",
+      "geosite:playstation"
+    ],
+    "索尼": [
+      "bm7:PlayStation",
+      "geosite:sony"
+    ],
+    "网易云": [
+      "bm7:NetEaseMusic"
+    ],
+    "爱奇艺": [
+      "bm7:iQIYI",
+      "geosite:iqiyi"
+    ],
+    "优酷": [
+      "bm7:Youku",
+      "geosite:youku"
+    ],
+    "腾讯视频": [
+      "bm7:TencentVideo"
+    ],
+    "知乎": [
+      "bm7:Zhihu",
+      "geosite:zhihu"
+    ],
+    "微博": [
+      "bm7:Weibo",
+      "geosite:weibo"
+    ],
+    "拼多多": [
+      "bm7:Pinduoduo",
+      "geosite:pinduoduo"
+    ],
+    "滴滴": [
+      "bm7:DiDi",
+      "geosite:didi"
+    ],
+    "小米": [
+      "bm7:XiaoMi",
+      "geosite:xiaomi"
+    ],
+    "米家": [
+      "bm7:XiaoMi",
+      "geosite:xiaomi"
+    ],
+    "华为": [
+      "bm7:Huawei",
+      "geosite:huawei"
+    ],
+    "海尔": [
+      "geosite:haier"
+    ],
+    "币安": [
+      "bm7:Binance",
+      "geosite:binance"
+    ]
+  },
+  "asn": {
+    "13335": "Cloudflare",
+    "209242": "Cloudflare",
+    "20940": "Akamai",
+    "16625": "Akamai",
+    "16509": "Amazon AWS",
+    "14618": "Amazon AWS",
+    "8987": "Amazon",
+    "15169": "Google",
+    "396982": "Google Cloud",
+    "36040": "YouTube",
+    "8075": "Microsoft",
+    "32934": "Meta",
+    "54113": "Fastly",
+    "714": "Apple",
+    "6185": "Apple",
+    "2906": "Netflix",
+    "40027": "Netflix",
+    "13414": "X / Twitter",
+    "62041": "Telegram",
+    "59930": "Telegram",
+    "44907": "Telegram",
+    "211157": "Telegram",
+    "37963": "阿里云",
+    "45102": "阿里云",
+    "24429": "阿里巴巴",
+    "45090": "腾讯云",
+    "132203": "腾讯云",
+    "132591": "腾讯",
+    "55967": "百度",
+    "38365": "百度",
+    "396986": "字节跳动",
+    "138699": "字节跳动",
+    "137718": "火山引擎",
+    "4134": "中国电信",
+    "4809": "中国电信 CN2",
+    "4837": "中国联通",
+    "9808": "中国移动",
+    "56040": "中国移动",
+    "56046": "中国移动",
+    "58453": "中国移动国际",
+    "9929": "中国联通 9929",
+    "4538": "中国教育网",
+    "23724": "中国电信 IDC",
+    "58466": "中国电信",
+    "17621": "中国联通",
+    "136907": "华为云",
+    "55990": "华为云",
+    "59019": "金山云",
+    "63835": "网宿 CDN",
+    "38283": "网宿 CDN",
+    "4812": "中国电信",
+    "9009": "M247",
+    "20473": "Vultr (Choopa)",
+    "14061": "DigitalOcean",
+    "63949": "Akamai Linode",
+    "24940": "Hetzner",
+    "16276": "OVH",
+    "906": "DMIT"
+  },
+  "nodeRegions": {}
+}

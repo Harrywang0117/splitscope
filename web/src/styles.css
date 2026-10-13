@@ -1,0 +1,419 @@
+@import 'tailwindcss';
+@import '@fontsource/funnel-sans/400.css';
+@import '@fontsource/funnel-sans/500.css';
+@import '@fontsource/funnel-sans/600.css';
+@import '@fontsource/funnel-display/500.css';
+@import '@fontsource/funnel-display/600.css';
+@import '@fontsource/geist-mono/400.css';
+@import '@fontsource/geist-mono/500.css';
+@import '@fontsource/geist-pixel/400.css';
+
+/*
+ * Framed, quiet shell (after designeer.xyz): white page, hairline shadows instead of borders,
+ * dashed structural rules, hatched gutters, cyan accent. Policy groups keep their metro-line colors.
+ */
+:root {
+  --canvas: #eef1f3;
+  --page: #fcfdfd;
+  --field: #f1f4f5;
+  --hover: #f5f7f8;
+  --ink: #0c1215;
+  --ink-2: #5d5d66;
+  --ink-3: #a1a1aa;
+  --line: rgb(0 0 0 / 0.08);
+  --line-strong: rgb(0 0 0 / 0.14);
+  --hatch: rgb(0 0 0 / 0.06);
+  --accent: #00bbff;
+  --accent-ink: #0284c7;
+  --accent-soft: rgb(0 187 255 / 0.1);
+  --signal: #d97706;
+  --signal-bg: #fff7e6;
+  --go: #16a34a;
+  --stop: #e3474c;
+  --shadow-card: 0 0 0 1px var(--line), 0 1px 2px -1px rgb(0 0 0 / 0.06), 0 2px 4px rgb(0 0 0 / 0.04);
+  --shadow-raised: 0 0 0 1px var(--line), 0 2px 6px -1px rgb(0 0 0 / 0.08), 0 6px 16px -4px rgb(0 0 0 / 0.06);
+  --shadow-overlay: 0 0 0 1px var(--line), 0 8px 28px -6px rgb(0 0 0 / 0.14);
+  --shadow-plate: inset 0 0 0 1px var(--line), inset 0 1px 0 rgb(255 255 255 / 0.9), inset 0 2px 5px rgb(0 0 0 / 0.04),
+    0 2px 6px -4px rgb(0 0 0 / 0.28);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --dur-ui: 0.22s;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --canvas: #030608;
+    --page: #0a0e11;
+    --field: #141a1e;
+    --hover: #11171b;
+    --ink: #eef3f5;
+    --ink-2: #a1a1aa;
+    --ink-3: #5d5d66;
+    --line: rgb(255 255 255 / 0.09);
+    --line-strong: rgb(255 255 255 / 0.16);
+    --hatch: rgb(255 255 255 / 0.07);
+    --accent-ink: #38c9ff;
+    --accent-soft: rgb(0 187 255 / 0.14);
+    --signal: #f5b041;
+    --signal-bg: #2b2110;
+    --go: #4ade80;
+    --stop: #f87171;
+    --shadow-card: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-raised: 0 0 0 1px var(--line), 0 2px 10px rgb(0 0 0 / 0.35);
+    --shadow-overlay: 0 0 0 1px rgb(255 255 255 / 0.12), 0 8px 28px rgb(0 0 0 / 0.5);
+    --shadow-plate: inset 0 0 0 1px var(--line), inset 0 1px 0 rgb(255 255 255 / 0.06), inset 0 2px 5px rgb(0 0 0 / 0.3);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --canvas: #030608;
+  --page: #0a0e11;
+  --field: #141a1e;
+  --hover: #11171b;
+  --ink: #eef3f5;
+  --ink-2: #a1a1aa;
+  --ink-3: #5d5d66;
+  --line: rgb(255 255 255 / 0.09);
+  --line-strong: rgb(255 255 255 / 0.16);
+  --hatch: rgb(255 255 255 / 0.07);
+  --accent-ink: #38c9ff;
+  --accent-soft: rgb(0 187 255 / 0.14);
+  --signal: #f5b041;
+  --signal-bg: #2b2110;
+  --go: #4ade80;
+  --stop: #f87171;
+  --shadow-card: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-raised: 0 0 0 1px var(--line), 0 2px 10px rgb(0 0 0 / 0.35);
+  --shadow-overlay: 0 0 0 1px rgb(255 255 255 / 0.12), 0 8px 28px rgb(0 0 0 / 0.5);
+  --shadow-plate: inset 0 0 0 1px var(--line), inset 0 1px 0 rgb(255 255 255 / 0.06), inset 0 2px 5px rgb(0 0 0 / 0.3);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-page: var(--page);
+  --color-field: var(--field);
+  --color-hover: var(--hover);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-signal: var(--signal);
+  --color-signal-bg: var(--signal-bg);
+  --color-go: var(--go);
+  --color-stop: var(--stop);
+  --font-sans: 'Funnel Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-display: 'Funnel Display', 'Funnel Sans', -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+  --font-mono: 'Geist Mono', 'SF Mono', Menlo, 'PingFang SC', monospace;
+  --font-pixel: 'Geist Pixel', 'Geist Mono', ui-monospace, 'PingFang SC', monospace;
+  --radius-chip: 6px;
+  --radius-control: 10px;
+  --radius-card: 14px;
+  --shadow-card: var(--shadow-card);
+  --shadow-raised: var(--shadow-raised);
+  --shadow-overlay: var(--shadow-overlay);
+  --shadow-plate: var(--shadow-plate);
+  --ease-out: var(--ease-out);
+}
+
+html,
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* full-bleed page; the hatch survives as a faint texture on the sidebar only */
+body {
+  background: var(--page);
+}
+.sidebar-hatch {
+  background-image: repeating-linear-gradient(-45deg, var(--hatch) 0 1px, transparent 1px 7px);
+  background-color: color-mix(in srgb, var(--canvas) 45%, var(--page));
+}
+
+/* page change: the old page recedes, the new one rises (View Transitions) */
+@keyframes page-recede {
+  to {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+    filter: blur(2px);
+  }
+}
+@keyframes page-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+::view-transition-old(page) {
+  animation: page-recede 0.24s var(--ease-out) both;
+}
+::view-transition-new(page) {
+  animation: page-rise 0.42s var(--ease-out) both;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* small uppercase label, pixel face */
+.eyebrow {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.lamp {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 18%, transparent);
+  flex: none;
+}
+.lamp-live {
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+.fallback-row {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--signal-bg) 90%, transparent), transparent 60%);
+  box-shadow: inset 2px 0 0 var(--signal);
+}
+
+.tap {
+  transition: transform var(--dur-ui) var(--ease-out), background-color var(--dur-ui) var(--ease-out),
+    box-shadow var(--dur-ui) var(--ease-out), color var(--dur-ui) var(--ease-out);
+}
+.tap:active {
+  transform: scale(0.98);
+}
+
+.link {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color var(--dur-ui) var(--ease-out);
+}
+.link:hover {
+  text-decoration-color: currentColor;
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+}
+
+/* entrance: rise out of a slight blur, staggered by --d */
+@keyframes rise-in {
+  0% {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+.rise {
+  animation: rise-in 0.55s var(--ease-out) both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes dialog-in {
+  0% {
+    opacity: 0;
+    filter: blur(2px);
+    transform: translateX(14px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+@keyframes overlay-in {
+  0% {
+    opacity: 0;
+  }
+}
+.dialog-in {
+  animation: dialog-in 0.32s var(--ease-out) both;
+}
+.overlay-in {
+  animation: overlay-in 0.22s var(--ease-out) both;
+}
+
+@keyframes toast-in {
+  0% {
+    opacity: 0;
+    filter: blur(2px);
+    transform: translateY(8px) scale(0.98);
+  }
+}
+.toast-in {
+  animation: toast-in 0.3s var(--ease-out) both;
+}
+
+@keyframes menu-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.96);
+  }
+}
+.menu-in {
+  animation: menu-in 0.18s var(--ease-out) both;
+  transform-origin: top right;
+}
+
+/* charts draw in from the left once */
+@keyframes reveal-x {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.trend-reveal {
+  animation: reveal-x 0.9s var(--ease-out) both;
+}
+
+/* flowing dashes along sankey bands */
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+.flow-dash {
+  animation: flow-dash 1.6s linear infinite;
+}
+
+@keyframes shake {
+  0% { transform: translate(0); }
+  20% { transform: translate(-6px); }
+  40% { transform: translate(5px); }
+  60% { transform: translate(-4px); }
+  80% { transform: translate(2px); }
+  100% { transform: translate(0); }
+}
+.shake {
+  animation: shake 0.4s var(--ease-out);
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+.shimmer {
+  background-image: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--accent) 55%, transparent) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* new live rows slide in once */
+@keyframes row-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+    background-color: var(--accent-soft);
+  }
+}
+.row-new {
+  animation: row-in 0.6s var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(page),
+  ::view-transition-new(page) {
+    animation: none;
+  }
+  .rise,
+  .menu-in,
+  .trend-reveal,
+  .flow-dash,
+  .dialog-in,
+  .overlay-in,
+  .toast-in,
+  .shake,
+  .row-new,
+  .lamp-live {
+    animation: none;
+  }
+  .shimmer {
+    animation: none;
+  }
+}
+
+/* ---------- density: 紧凑 hides each row's secondary line and tightens the padding ---------- */
+/* unlayered on purpose, so it wins over the utility classes on the same elements */
+:root[data-density='compact'] .sub {
+  display: none;
+}
+:root[data-density='compact'] .dense-row {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+:root[data-density='compact'] .dense-tile {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 6px;
+}
+
+/* ---------- dock and sheet ---------- */
+@keyframes dock-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+    filter: blur(4px);
+  }
+}
+.dock-in {
+  animation: dock-in 0.5s var(--ease-out) 0.25s both;
+}
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+.sheet-in {
+  animation: sheet-in 0.34s var(--ease-out) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dock-in,
+  .sheet-in {
+    animation: none;
+  }
+}
+/* the palette's own field: the dialog already shows where typing goes */
+.palette-input:focus-visible {
+  outline: none;
+}

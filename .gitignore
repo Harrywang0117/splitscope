@@ -1,0 +1,9 @@
+node_modules/
+dist/
+data/cache/
+.env
+*.db
+.claude/
+.DS_Store
+deploy.env
+data/demo/

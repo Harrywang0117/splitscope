@@ -1,0 +1,29 @@
+# Runs Splitscope on the router itself (OpenWrt / iStoreOS with Docker, OpenClash or another mihomo).
+# Put CLASH_SECRET (and any other setting from .env.example) in .env next to this file.
+services:
+  splitscope:
+    build: .
+    image: splitscope:local
+    container_name: splitscope
+    # host network: the kernel API and mixed port on 127.0.0.1, the router's ARP table, mDNS on the LAN
+    network_mode: host
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      CLASH_API: ${CLASH_API:-http://127.0.0.1:9090}
+      MIXED_PROXY: ${MIXED_PROXY:-http://127.0.0.1:7893}
+      HOST_FILES: /host
+      PORT: ${PORT:-8686}
+    volumes:
+      - ./data:/app/data/cache
+      # read-only router state. Drop the lines your router does not have.
+      - /tmp:/host/tmp:ro # dnsmasq DHCP leases (/tmp/dhcp.leases)
+      - /etc/config:/host/etc/config:ro # uci: static DHCP hosts, OpenClash settings
+      - /etc/openclash/config:/host/etc/openclash/config:ro # OpenClash yaml (for the config snapshot)
+      - /etc/openclash/custom:/host/etc/openclash/custom:ro # OpenClash custom rules
+    mem_limit: 256m
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: '2'
