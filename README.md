@@ -146,7 +146,7 @@ docker compose up -d --build
 - 容器使用宿主机网络（`network_mode: host`），所以默认连的是 `127.0.0.1:9090`（API）和 `127.0.0.1:7893`（混合端口）。端口不同的话，在 `.env` 里写 `CLASH_API` 和 `MIXED_PROXY`。
 - `docker-compose.yml` 只读挂载了 `/tmp`（DHCP 租约）、`/etc/config`、`/etc/openclash/config`、`/etc/openclash/custom`。路由器上没有的路径，把对应那一行删掉。
 - 镜像基于 `node:22-bookworm-slim`。路由器拉不到 Docker Hub 时，先给 Docker 配好镜像源或代理。
-- 数据在 `./data` 里（SQLite，几百 MB 以内），内存上限 256 MB，实际占用约 80 MB。
+- 数据在 `./data` 里（SQLite，几百 MB 以内）。识别库加载后内存约 130 MB，每天更新识别库时会短暂升高，所以上限设为 512 MB。
 
 **一键部署脚本**：如果你在电脑上已经配好了 `.env`，并且能用 ssh 免密登录路由器，可以把 `deploy.env.example` 复制成 `deploy.env` 并填好，以后每次更新只需要执行：
 

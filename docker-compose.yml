@@ -21,7 +21,8 @@ services:
       - /etc/config:/host/etc/config:ro # uci: static DHCP hosts, OpenClash settings
       - /etc/openclash/config:/host/etc/openclash/config:ro # OpenClash yaml (for the config snapshot)
       - /etc/openclash/custom:/host/etc/openclash/custom:ro # OpenClash custom rules
-    mem_limit: 256m
+    # ~130 MB once the rule data is loaded; the daily update briefly parses a second copy
+    mem_limit: 512m
     logging:
       driver: json-file
       options:
