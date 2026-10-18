@@ -61,7 +61,7 @@ const minuteAcc = new Map<string, { minute: number; grp: string; direct: number;
 
 /** Called by the live store for every byte delta; `isNew` once when the connection first appears. */
 export function recordDelta(conn: LiveConn, up: number, down: number, isNew: boolean) {
-  if (conn.probe || conn.self) return;
+  if (conn.probe || conn.self || conn.relay) return;
   if (!up && !down && !isNew) return;
   const p = pending.get(conn.id);
   if (p) {

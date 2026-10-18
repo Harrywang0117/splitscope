@@ -85,52 +85,81 @@ export const mihomo = {
 
 /**
  * Keeps a WebSocket to a mihomo streaming endpoint open, reconnecting with backoff.
+ *
+ * Node's WebSocket (undici 6) fires only `error`, never `close`, when the handshake fails (port
+ * closed, non-101 answer), and nothing at all when the peer accepts the connection but never
+ * answers. Waiting for `close` alone once left the live view dead for two days after OpenClash's
+ * 03:00 geo update reloaded the kernel. So error, close, a handshake slower than `connectTimeoutMs`
+ * and (with `staleMs`) an open stream that goes quiet all replace the socket.
  */
 export function streamWs(
   pathname: string,
   onMessage: (data: unknown) => void,
   onStatus?: (up: boolean) => void,
+  opts: { staleMs?: number; connectTimeoutMs?: number } = {},
 ): { close: () => void } {
-  let ws: WebSocket | null = null;
+  const { staleMs = 0, connectTimeoutMs = 10_000 } = opts;
   let closed = false;
+  let up = false;
   let delay = 1000;
+  let retry: NodeJS.Timeout | undefined;
+  let stop: () => void = () => {};
   const base = config.clashApi.replace(/^http/, 'ws');
   const sep = pathname.includes('?') ? '&' : '?';
   const url = `${base}${pathname}${config.clashSecret ? `${sep}token=${encodeURIComponent(config.clashSecret)}` : ''}`;
 
+  const setUp = (v: boolean) => {
+    if (up === v) return;
+    up = v;
+    onStatus?.(v);
+  };
+
   const open = () => {
     if (closed) return;
-    ws = new WebSocket(url);
-    ws.onopen = () => {
-      delay = 1000;
-      onStatus?.(true);
+    const sock = new WebSocket(url);
+    let last = Date.now();
+    let done = false;
+    const watch = setInterval(() => {
+      const quiet = Date.now() - last;
+      if (sock.readyState === WebSocket.CONNECTING ? quiet > connectTimeoutMs : staleMs > 0 && quiet > staleMs) drop();
+    }, 1000);
+    // Handlers come off before close(): closing a socket that failed while connecting fires another
+    // error event, which used to recurse until the stack overflowed. The reconnect does not wait for
+    // a close event either, since mihomo never answers a close frame.
+    const drop = () => {
+      if (done) return;
+      done = true;
+      clearInterval(watch);
+      sock.onopen = sock.onmessage = sock.onerror = sock.onclose = null;
+      if (sock.readyState !== WebSocket.CLOSED) sock.close();
+      setUp(false);
+      if (closed) return;
+      retry = setTimeout(open, delay);
+      delay = Math.min(delay * 2, 30_000);
     };
-    ws.onmessage = (ev) => {
+    stop = drop;
+    sock.onopen = () => {
+      last = Date.now();
+      delay = 1000;
+      setUp(true);
+    };
+    sock.onmessage = (ev) => {
+      last = Date.now();
       try {
         onMessage(JSON.parse(typeof ev.data === 'string' ? ev.data : String(ev.data)));
       } catch {
         /* ignore malformed frame */
       }
     };
-    const sock = ws;
-    let retried = false;
-    sock.onclose = () => {
-      onStatus?.(false);
-      if (closed || retried) return;
-      retried = true;
-      setTimeout(open, delay);
-      delay = Math.min(delay * 2, 30000);
-    };
-    // Do not call close() here: closing a socket that failed while connecting fires another
-    // error event, which recursed until the stack overflowed. The close event follows an error
-    // anyway and schedules the reconnect.
-    sock.onerror = () => undefined;
+    sock.onerror = drop;
+    sock.onclose = drop;
   };
   open();
   return {
     close: () => {
       closed = true;
-      ws?.close();
+      clearTimeout(retry);
+      stop();
     },
   };
 }

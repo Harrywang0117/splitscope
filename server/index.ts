@@ -30,6 +30,7 @@ import { favicon, lastDelays, testDelays } from './extras.ts';
 import { healthReport, startHealth } from './history/health.ts';
 import { checkup, deviceDetail, flow, isDim, nodes, parseRange, regions, summary, top, trend } from './history/queries.ts';
 import { historyStatus, startHistory } from './history/store.ts';
+import { dropRelayHistory } from './history/relayCleanup.ts';
 import { CONN_COLUMNS, getSettings, iterateConnLog, queryConnLog, saveSettings, startConnLog, storageStats, type ConnQuery } from './history/connlog.ts';
 import { addExpectations, caseConnections, deleteExpectation, listCases, listExpectations, updateCases, type CaseRow } from './history/cases.ts';
 
@@ -408,6 +409,12 @@ async function boot() {
   await initIntel();
   await refreshSnapshot('startup').catch((e) => console.error('[snapshot]', e.message));
   await refreshDevices().catch((e) => console.error('[devices]', e.message));
+  try {
+    const dropped = dropRelayHistory();
+    if (dropped) console.log('[history] dropped relay hops recorded as traffic:', dropped);
+  } catch (e) {
+    console.error('[history] relay cleanup failed:', (e as Error).message);
+  }
   startLive();
   startHistory();
   startConnLog();

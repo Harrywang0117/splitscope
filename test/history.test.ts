@@ -48,8 +48,9 @@ beforeAll(async () => {
   recordDelta(conn({ host: 'claude.ai', service: { id: 'geosite:anthropic', name: 'Claude', source: 'geosite', also: [] } }), 1000, 9000, true);
   recordDelta(conn({ host: '', dstIp: '110.76.6.92', target: { ip: '110.76.6.92', country: 'CN', tags: [] }, rule: 'Match', rulePayload: '', fallback: 'match', group: '其他', node: 'US-Tunnel-01' }), 10, 20, true);
   recordDelta(conn({ host: 'www.baidu.com', direct: true, group: '国内', node: '直连', rulePayload: 'Direct / Domain', target: { ip: '183.2.172.177', country: 'CN', tags: [] } }), 500, 500, true);
-  // probes never count
+  // probes and relay hops (already counted as the connection they carry) never count
   recordDelta(conn({ host: 'probe.test', probe: true }), 999, 999, true);
+  recordDelta(conn({ host: '', dstIp: '192.0.2.7', srcIp: '', inbound: 'Inner', rule: '', rulePayload: '', group: 'Front', node: 'front-01', relay: true }), 999, 999, true);
   expect(flushHistory()).toBe(3);
 });
 
@@ -159,12 +160,13 @@ describe('connection log', () => {
     expect(log.queryConnLog({ q: 'fold.test', from: t0 - 1, to: t0 + 120_000 })).toMatchObject({ total: 3, conns: 4 });
   });
 
-  it("never logs this site's own traffic", async () => {
+  it("never logs this site's own traffic or relay hops", async () => {
     const log = await import('../server/history/connlog.ts');
     const { db } = await import('../server/db.ts');
     log.logOpen(conn({ host: 'self.test', self: true }));
+    log.logOpen(conn({ host: 'relay.test', srcIp: '', inbound: 'Inner', rule: '', relay: true }));
     log.flushConnLog();
-    expect(db.prepare(`SELECT count(*) n FROM conn_log WHERE host = 'self.test'`).get()).toEqual({ n: 0 });
+    expect(db.prepare(`SELECT count(*) n FROM conn_log WHERE host IN ('self.test', 'relay.test')`).get()).toEqual({ n: 0 });
   });
 });
 
@@ -242,5 +244,45 @@ describe('draft marks on cases', () => {
     expect(m.has('alipaylog.com.evil.net')).toBe(false);
     expect(m.has('47.236.0.1')).toBe(false);
     expect(drafts.pendingDraftCount()).toBe(3);
+  });
+});
+
+describe('relay hops', () => {
+  it('are Inner connections without a rule; Inner ones with a rule are the kernel\'s own requests', async () => {
+    const { isRelay } = await import('../server/mihomo/connStore.ts');
+    const meta = (type: string) => ({ type, network: 'tcp', sourceIP: '', destinationIP: '192.0.2.7', sourcePort: '0', destinationPort: '443', host: '' });
+    expect(isRelay({ metadata: meta('Inner'), rule: '' })).toBe(true);
+    expect(isRelay({ metadata: meta('Inner'), rule: 'Match' })).toBe(false);
+    expect(isRelay({ metadata: meta('Redir'), rule: 'Match' })).toBe(false);
+  });
+
+  it('are taken out of what was recorded before, once', async () => {
+    const { db } = await import('../server/db.ts');
+    const { dropRelayHistory } = await import('../server/history/relayCleanup.ts');
+    const h = Math.floor(Date.now() / 3_600_000) - 5;
+    const hour = db.prepare(`INSERT INTO traffic_hour (hour, src, host, grp, node, rule, network, service, svc_name, provider, fallback, direct, scope, country, up, down, conns, last)
+      VALUES (?, ?, ?, ?, 'n', ?, 'tcp', '', '', '', '', 0, '', '', ?, ?, ?, 0)`);
+    // "Mixed" carried a relay and a device's own connection in the same hour, "Pure" only relays
+    hour.run(h, '', '192.0.2.7', 'Mixed', '', 300, 600, 3);
+    hour.run(h, '192.168.1.10', 'mixed.test', 'Mixed', 'RuleSet|X', 100, 200, 1);
+    hour.run(h, '', '192.0.2.8', 'Pure', '', 50, 50, 2);
+    const minute = db.prepare('INSERT INTO traffic_min (minute, grp, direct, up, down, conns) VALUES (?, ?, 0, ?, ?, ?)');
+    minute.run(h * 60 + 10, 'Mixed', 400, 800, 4);
+    minute.run(h * 60 + 11, 'Pure', 50, 50, 2);
+    const log = db.prepare(`INSERT INTO conn_log (id, start, src, src_port, host, dst_ip, dst_port, network, inbound, rule, rule_payload, rule_index, grp, chain, node, provider, direct, fallback, service, svc_name, target_ip, country, org, scope)
+      VALUES (?, 0, '', 0, ?, '', 443, 'tcp', 'Inner', ?, '', -1, '', '', '', '', 0, '', '', '', '', '', '', '')`);
+    log.run('relay-row', 'relay-row.test', '');
+    log.run('kernel-own', 'kernel-own.test', 'RuleSet');
+    db.prepare(`INSERT INTO cases (key, reason, host, service, grp, rule, rule_payload, rule_index, node, chain, expected, scope, country, target_ip, org, network, first_seen, last_seen, count, devices)
+      VALUES ('intl_direct|relay-case.test|直连', 'intl_direct', 'relay-case.test', '', '直连', '', '', -1, '', '', '', '', '', '', '', 'tcp', 0, 0, 1, '[]')`).run();
+
+    expect(dropRelayHistory()).toMatchObject({ hours: 2, connLog: 1, cases: 1 });
+    expect(db.prepare(`SELECT grp, up, down, conns FROM traffic_min WHERE minute / 60 = ? ORDER BY grp`).all(h).map((r) => ({ ...r }))).toEqual([
+      { grp: 'Mixed', up: 100, down: 200, conns: 1 },
+    ]);
+    expect(db.prepare(`SELECT count(*) n FROM traffic_hour WHERE hour = ?`).get(h)).toEqual({ n: 1 });
+    expect(db.prepare(`SELECT id FROM conn_log WHERE id IN ('relay-row', 'kernel-own')`).all().map((r) => r.id)).toEqual(['kernel-own']);
+    expect(db.prepare(`SELECT count(*) n FROM cases WHERE host = 'relay-case.test'`).get()).toEqual({ n: 0 });
+    expect(dropRelayHistory()).toBeNull();
   });
 });

@@ -57,6 +57,11 @@ export interface LiveConn {
   probe?: boolean;
   /** this site's own background traffic (health checks, downloads, favicons) */
   self?: boolean;
+  /**
+   * the kernel's own hop to a chained node's server (dialer-proxy): carries another connection,
+   * whose bytes already count, so this one stays out of every total
+   */
+  relay?: boolean;
 }
 
 export interface LiveTick {

@@ -90,12 +90,12 @@ const folds = new Map<string, { row: string; start: number }>();
 const foldKey = (c: LiveConn) => [c.srcIp, c.host || c.dstIp, c.dstPort, c.network, c.rule, c.rulePayload, c.group, c.node].join('|');
 
 export function logOpen(c: LiveConn) {
-  if (c.probe || c.self) return;
+  if (c.probe || c.self || c.relay) return;
   opened.set(c.id, c);
 }
 
 export function logClose(c: LiveConn) {
-  if (c.probe || c.self) return;
+  if (c.probe || c.self || c.relay) return;
   closed.set(c.id, c);
 }
 

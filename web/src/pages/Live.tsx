@@ -119,7 +119,7 @@ export function Live({ live, params }: { live: LiveData; params: URLSearchParams
     () =>
       all.filter(
         (c) =>
-          (showProbe || !(c.probe || c.self)) &&
+          (showProbe || !(c.probe || c.self || c.relay)) &&
           (!device || c.srcIp === device) &&
           (!group || c.group === group) &&
           (!onlyFallback || c.fallback) &&
@@ -151,7 +151,7 @@ export function Live({ live, params }: { live: LiveData; params: URLSearchParams
     }
   };
 
-  const activeList = useMemo(() => [...live.active.values()].filter((c) => !c.probe && !c.self), [live.version]); // eslint-disable-line react-hooks/exhaustive-deps
+  const activeList = useMemo(() => [...live.active.values()].filter((c) => !c.probe && !c.self && !c.relay), [live.version]); // eslint-disable-line react-hooks/exhaustive-deps
   const deviceCount = new Set(activeList.map((c) => c.srcIp)).size;
   const fallbackCount = activeList.filter((c) => c.fallback).length;
 
@@ -259,7 +259,7 @@ export function Live({ live, params }: { live: LiveData; params: URLSearchParams
           含已关闭
         </Toggle>
         <Toggle on={showProbe} set={setShowProbe}>
-          显示本站流量
+          显示本站和中转
         </Toggle>
       </div>
 
@@ -421,6 +421,11 @@ function ConnTable({
                   )}
                   {c.probe && <span className="rounded-chip bg-field px-1 font-pixel text-[10px]">probe</span>}
                   {c.self && <span className="rounded-chip bg-field px-1 font-pixel text-[10px]" title="本站自己的健康检测、图标、规则库下载">本站</span>}
+                  {c.relay && (
+                    <span className="rounded-chip bg-field px-1 font-pixel text-[10px]" title="链式代理的中间一跳：内核经前置节点去连落地节点，流量已算在它承载的那条连接里，不计入统计">
+                      中转
+                    </span>
+                  )}
                 </span>
               </span>
               <span className="hidden min-w-0 text-[12.5px] text-ink-2 xl:block">

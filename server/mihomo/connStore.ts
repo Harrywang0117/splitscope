@@ -20,6 +20,9 @@ let closed: LiveConn[] = [];
 let lastTs = 0;
 let totals = { up: 0, down: 0, upSpeed: 0, downSpeed: 0, active: 0 };
 let prevTotals = { up: 0, down: 0 };
+/** relay bytes seen since this site started; the kernel's own totals include them */
+let relayBytes = { up: 0, down: 0 };
+let prevKernel = { up: 0, down: 0 };
 let pendingPatches: LiveTick['patches'] = [];
 let connected = false;
 
@@ -66,6 +69,16 @@ export function isDirectNode(node: string): boolean {
   if (node === 'DIRECT') return true;
   const t = getSnapshot()?.proxyTypes[node];
   return t === 'Direct';
+}
+
+/**
+ * A node with `dialer-proxy` reaches its server through another node, and the kernel lists that
+ * hop as a connection of its own: type Inner, no source, no rule (front node -> landing server).
+ * Its bytes are the carried connection's bytes again. Inner connections that did match a rule
+ * are the kernel's own requests (rule-set downloads and the like) and count normally.
+ */
+export function isRelay(c: Pick<RawConnection, 'metadata' | 'rule'>): boolean {
+  return c.metadata.type === 'Inner' && !c.rule;
 }
 
 function fallbackOf(rule: string): FallbackKind {
@@ -118,6 +131,7 @@ function enrich(c: RawConnection): LiveConn {
     downSpeed: 0,
     probe: isProbeConnection(m.sourceIP, Number(m.sourcePort)) || undefined,
     self: isSelfConnection(m.sourceIP, Number(m.sourcePort)) || undefined,
+    relay: isRelay(c) || undefined,
     seenAt: Date.now(),
   };
 
@@ -153,11 +167,19 @@ function onSnapshot(data: unknown) {
       tick.added.push(e);
       recordDelta(e, c.upload, c.download, true);
       logOpen(e);
+      if (e.relay) {
+        relayBytes.up += c.upload;
+        relayBytes.down += c.download;
+      }
       continue;
     }
     const dUp = Math.max(0, c.upload - cur.up);
     const dDown = Math.max(0, c.download - cur.down);
     if (dUp || dDown) recordDelta(cur, dUp, dDown, false);
+    if (cur.relay) {
+      relayBytes.up += dUp;
+      relayBytes.down += dDown;
+    }
     const upSpeed = dUp / dt;
     const downSpeed = dDown / dt;
     if (c.upload !== cur.up || c.download !== cur.down || cur.upSpeed || cur.downSpeed) {
@@ -182,8 +204,20 @@ function onSnapshot(data: unknown) {
     closed = closed.filter((c) => now - (c.closedAt ?? now) < CLOSED_TTL).slice(-CLOSED_MAX);
   }
 
-  const up = d.uploadTotal ?? 0;
-  const down = d.downloadTotal ?? 0;
+  const kUp = d.uploadTotal ?? 0;
+  const kDown = d.downloadTotal ?? 0;
+  if (kUp < prevKernel.up || kDown < prevKernel.down) {
+    // the kernel restarted: its totals start over with only the connections open now
+    relayBytes = { up: 0, down: 0 };
+    for (const c of active.values()) {
+      if (!c.relay) continue;
+      relayBytes.up += c.up;
+      relayBytes.down += c.down;
+    }
+  }
+  prevKernel = { up: kUp, down: kDown };
+  const up = Math.max(0, kUp - relayBytes.up);
+  const down = Math.max(0, kDown - relayBytes.down);
   totals = {
     up,
     down,
@@ -199,10 +233,16 @@ function onSnapshot(data: unknown) {
 }
 
 export function startLive() {
-  streamWs('/connections?interval=1000', onSnapshot, (up) => {
-    connected = up;
-    liveEvents.emit('status', up);
-  });
+  // the kernel sends a frame every second; 15 s of silence means the stream is dead
+  streamWs(
+    '/connections?interval=1000',
+    onSnapshot,
+    (up) => {
+      connected = up;
+      liveEvents.emit('status', up);
+    },
+    { staleMs: 15_000 },
+  );
 }
 
 export function liveState() {

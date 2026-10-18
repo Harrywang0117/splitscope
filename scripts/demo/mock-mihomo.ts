@@ -198,11 +198,34 @@ let totals = { up: 0, down: 0 };
 let fake = 1;
 let port = 50000;
 
+/** nodes that reach their own server through another node (dialer-proxy) */
+const DIALERS: Record<string, { via: string; server: string }> = { '美国 01': { via: '香港 01', server: '203.0.113.20' } };
+
 function open(src: string, p: Pick) {
   const network = p.udp && Math.random() < 0.6 ? 'udp' : 'tcp';
   const r = route(p.host, p.ip, network);
   const direct = r.chains[0] === 'DIRECT';
   const id = crypto.randomUUID();
+  const until = Date.now() + (p.heavy ? 60_000 + Math.random() * 120_000 : 3_000 + Math.random() * 40_000);
+  const rate = p.heavy ? 40_000 + Math.random() * 360_000 : 300 + Math.random() * 12_000;
+  const dialer = DIALERS[r.chains[0]];
+  if (dialer && network === 'tcp') {
+    // the kernel lists the hop to the chained node's server as a connection of its own, moving the same bytes
+    const hop = crypto.randomUUID();
+    conns.set(hop, {
+      id: hop,
+      metadata: { network, type: 'Inner', sourceIP: '', destinationIP: dialer.server, sourcePort: '0', destinationPort: '443', host: '', dnsMode: 'normal', remoteDestination: dialer.server },
+      upload: 0,
+      download: 0,
+      start: new Date().toISOString(),
+      chains: chainOf(dialer.via),
+      providerChains: ['demo-sub'],
+      rule: '',
+      rulePayload: '',
+      until,
+      rate,
+    });
+  }
   conns.set(id, {
     id,
     metadata: {
@@ -223,8 +246,8 @@ function open(src: string, p: Pick) {
     providerChains: direct ? [] : ['demo-sub'],
     rule: r.rule.type,
     rulePayload: r.rule.payload,
-    until: Date.now() + (p.heavy ? 60_000 + Math.random() * 120_000 : 3_000 + Math.random() * 40_000),
-    rate: p.heavy ? 40_000 + Math.random() * 360_000 : 300 + Math.random() * 12_000,
+    until,
+    rate,
   });
 }
 

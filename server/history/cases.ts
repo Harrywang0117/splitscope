@@ -141,7 +141,7 @@ interface Hit {
 const pending: Hit[] = [];
 
 export function detectAnomalies(c: LiveConn): Reason[] {
-  if (c.probe || c.self || !c.group) return [];
+  if (c.probe || c.self || c.relay || !c.group) return [];
   const ip = c.target?.ip ?? c.dstIp;
   const exp = expectationFor(c.host, ip);
   const scope = scopeOf(c.host, ip, c.target?.country ?? '');

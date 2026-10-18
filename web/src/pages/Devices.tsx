@@ -29,7 +29,7 @@ export function Devices({ live, range }: { live: LiveData; range: Range }) {
   const usage = useMemo(() => {
     const m = new Map<string, { conns: number; speed: number; bytes: number; fallback: number }>();
     for (const c of live.active.values()) {
-      if (c.probe || c.self) continue;
+      if (c.probe || c.self || c.relay) continue;
       const u = m.get(c.srcIp) ?? { conns: 0, speed: 0, bytes: 0, fallback: 0 };
       u.conns++;
       u.speed += c.upSpeed + c.downSpeed;

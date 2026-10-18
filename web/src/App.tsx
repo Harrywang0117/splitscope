@@ -177,7 +177,7 @@ export function App() {
     let proxyBps = 0;
     let directBps = 0;
     for (const c of live.active.values()) {
-      if (c.probe || c.self) continue;
+      if (c.probe || c.self || c.relay) continue;
       const v = c.upSpeed + c.downSpeed;
       if (c.direct) directBps += v;
       else proxyBps += v;

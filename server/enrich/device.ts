@@ -93,7 +93,8 @@ function inCidr(ip: string, base: string, bits: number): boolean {
 }
 
 function specialOf(ip: string): Device['special'] {
-  if (ip === '127.0.0.1' || routerIps.has(ip)) return 'router';
+  // no source at all: the kernel's own connections (relay hops, rule-set downloads)
+  if (!ip || ip === '127.0.0.1' || routerIps.has(ip)) return 'router';
   if (inCidr(ip, '100.64.0.0', 10)) return 'wan';
   if (inCidr(ip, '172.16.0.0', 12)) return 'docker';
   return '';
